@@ -254,14 +254,20 @@
                     handled = YES;
                 }
             }
-            if (!handled && ![input appendSampleBuffer:sampleBuffer])
-            {
+            @try {
+                if (!handled && ![input appendSampleBuffer:sampleBuffer])
+                {
+                    error = YES;
+                }
+                CFRelease(sampleBuffer);
+                
+                if (error)
+                {
+                    return NO;
+                }
+            } @catch (NSException *exception) {
+                CFRelease(sampleBuffer);
                 error = YES;
-            }
-            CFRelease(sampleBuffer);
-
-            if (error)
-            {
                 return NO;
             }
         }
